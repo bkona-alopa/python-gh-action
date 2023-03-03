@@ -25,4 +25,5 @@ jobs:
             regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
             match = re.search(regex, "${{ github.ref_name }}") 
             print("********************")
+            print(match)
             print("Hello World..!")
