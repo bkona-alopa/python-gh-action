@@ -10,7 +10,7 @@ on:
 
 jobs:
   image-scan:
-    name: image-scan
+    name: image-scan-test
     runs-on: ubuntu-latest
 
     steps:
