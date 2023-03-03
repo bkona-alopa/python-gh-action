@@ -1,7 +1,12 @@
 name: Run Script
 
 on:
-  push:
+  pull_request:
+    branches:
+      - main
+      - master
+      - release*
+      - develop
 
 jobs:
   image-scan:
@@ -12,6 +17,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/})"
+        id: extract_branch
+
       - name: python setup
         uses: actions/setup-python@v4
         with:
@@ -21,6 +31,11 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            print("********************")
-            print("Hello World..!")
-            print("ref: " + ${{ github.ref_name }})
+            import re 
+            regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
+            listOfTicketsFromBranchName = re.findall(regex, "${{ steps.extract_branch.outputs.branch }}")
+            listOfTicketsFromPRTitle = re.findall(regex, "${{ github.event.pull_request.title }}")
+            listOfTickets = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
+
+            for item in listOfTickets:
+              print(item)
