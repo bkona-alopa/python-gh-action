@@ -1,0 +1,27 @@
+name: Run Script
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: python setup
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: running script
+        uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import os
+            print("Directory contents:")
+            for f in os.listdir():
+                print(f)
+
+            print(Hello World..!)    
