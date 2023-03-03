@@ -39,7 +39,7 @@ jobs:
           script: |
             import re 
             regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
-            listOfTicketsFromBranchName = re.findall(regex, "${{ steps.extract_branch.outputs.branch }}")
+            listOfTicketsFromBranchName = re.findall(regex, "${{ github.head_ref }}")
             listOfTicketsFromPRTitle = re.findall(regex, "${{ github.event.pull_request.title }}")
             listOfTickets = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
 
