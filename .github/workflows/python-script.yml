@@ -1,5 +1,3 @@
-name: Run Script
-
 on:
   pull_request:
     branches:
@@ -10,32 +8,91 @@ on:
 
 jobs:
   image-scan:
-    name: image-scan
+    name: image-scan-test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/})"
-        id: extract_branch
-
       - name: python setup
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
+      - name: installing jira
+        run: |
+          pip install jira
+
       - name: running script
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
+            from jira import JIRA
             import re 
+            #######################################################################################################
+            # ADD THE REQUIRED LIST OF ALLOWED ADVISORIES INTHE BELOW LIST
+            ALLOWED_STATUS_LIST = ["In Progress", "Needs Review", "Selected For Development", "Reopened", "Assign"]
+            #######################################################################################################
+            jiraOptions = {'server': "https://amalgamrx.atlassian.net"}
+            jira = JIRA(options=jiraOptions, basic_auth=("${{ secrets.JIRA_USER_NAME }}", "${{ secrets.JIRA_TOKEN }}"))
             regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
-            listOfTicketsFromBranchName = re.findall(regex, "${{ steps.extract_branch.outputs.branch }}")
+            listOfTicketsFromBranchName = re.findall(regex, "${{ github.head_ref }}")
             listOfTicketsFromPRTitle = re.findall(regex, "${{ github.event.pull_request.title }}")
-            listOfTickets = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
+            LIST_OF_TICKETS = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
 
-            for item in listOfTickets:
-              print(item)
+            listOfValidTickets = []
+            listOfNotValidTickets = []
+            listOfAllowedTickets = []
+            listOfNotAllowedTickets = []
+            parentTicketList = []
+
+            for TICKET in LIST_OF_TICKETS:
+                try:
+                    ticketValidity = jira.issue(TICKET)
+                    listOfValidTickets.append(TICKET)
+                except:
+                    listOfNotValidTickets.append(TICKET)
+                    
+            if len(listOfNotValidTickets) != 0:
+                print(listOfNotValidTickets)
+                print("Above tickets are not valid")
+                exit(1)
+
+            for ticket in LIST_OF_TICKETS:
+                singleIssue = jira.issue(ticket)
+                ticketStatus = singleIssue.fields.status.name
+                if ticketStatus in ALLOWED_STATUS_LIST:
+                    listOfAllowedTickets.append(ticket)
+                else:
+                    print(ticket + " status in not allowed")
+                    listOfNotAllowedTickets.append(ticket)
+                    
+            if len(listOfNotAllowedTickets) != 0:
+                print(listOfNotAllowedTickets)
+                print("The status for the above ticket(s) is/are not allowed")
+                exit(1)
+                    
+            for ticket in listOfAllowedTickets:
+                try:
+                    singleIssue = jira.issue(ticket)
+                    parentCheck = singleIssue.fields.parent
+                    parentTicketList.append(singleIssue.fields.parent.key)
+                except AttributeError:
+                    pass
+                    
+            for ticket in parentTicketList:
+                singleIssue = jira.issue(ticket)
+                ticketStatus = singleIssue.fields.status.name
+                if ticketStatus in ALLOWED_STATUS_LIST:
+                    listOfAllowedTickets.append(ticket)
+                else:
+                    print(ticket + " is a parent ticket, status in not allowed")
+                    listOfNotAllowedTickets.append(ticket)
+
+            if len(listOfNotAllowedTickets) == 0:
+                print("Jira Connection Passed")
+                exit(0)
+            else:
+                print("Jira connection failed")
+                exit(1)
