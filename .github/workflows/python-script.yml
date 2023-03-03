@@ -25,5 +25,5 @@ jobs:
             regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
             match = re.findall(regex, "${{ github.ref_name }}")
 
-            print(match)
-            print("********************")
+            for item in match:
+              print(item)
