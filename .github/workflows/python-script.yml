@@ -28,8 +28,9 @@ jobs:
           script: |
             import re 
             regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
-            match = re.findall(regex, "${{ github.ref_name }}")
-            print(${{ github.event.pull_request.title }})
+            listOfTicketsFromBranchName = re.findall(regex, "${{ github.ref_name }}")
+            listOfTicketsFromPRTitle = re.findall(regex, "${{ github.event.pull_request.title }}")
+            listOfTickets = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
 
-            for item in match:
+            for item in listOfTickets:
               print(item)
