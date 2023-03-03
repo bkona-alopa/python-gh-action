@@ -27,5 +27,3 @@ jobs:
 
             print(match)
             print("********************")
-            print("Hello World..!")
-            print("ref: " + ${{ github.ref_name }})
