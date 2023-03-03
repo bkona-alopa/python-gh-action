@@ -1,7 +1,12 @@
 name: Run Script
 
 on:
-  push:
+  pull_request:
+    branches:
+      - main
+      - master
+      - release*
+      - develop
 
 jobs:
   image-scan:
