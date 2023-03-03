@@ -21,6 +21,11 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
+            import re 
+            regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
+            match = re.findall(regex, "${{ github.ref_name }}")
+
+            print(match)
             print("********************")
             print("Hello World..!")
             print("ref: " + ${{ github.ref_name }})
