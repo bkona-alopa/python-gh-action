@@ -4,24 +4,33 @@ on:
   push:
 
 jobs:
-  build:
+  image-scan:
+    name: image-scan
     runs-on: ubuntu-latest
+
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: python setup
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+    # - name: python setup
+    #   uses: actions/setup-python@v4
+    #   with:
+    #     python-version: '3.x'
 
-      - name: running script
-        uses: jannekem/run-python-script-action@v1
-        with:
-          script: |
-            import os
-            print("Directory contents:")
-            for f in os.listdir():
-                print(f)
+    # - name: running script
+    #   uses: jannekem/run-python-script-action@v1
+    #   with:
+    #     script: |
+    #       import os
+    #       print("Directory contents:")
+    #       for f in os.listdir():
+    #           print(f)
 
-            print("Hello World..!")    
+    #       print("Hello World..!")    
+      - name: Groovy Setup
+        uses: wtfjoke/setup-groovy@v1
+        with:
+          groovy-version: '4.0.9'
+
+      - name: runnning groovy script
+        run: groovy HelloWorld.groovy
