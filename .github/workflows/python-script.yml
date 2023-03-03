@@ -21,11 +21,6 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os
-
-            env_file = os.getenv('GITHUB_ENV')
-            f = open(env_file, "r")
-            print(f.read())
             print("********************")
             print("Hello World..!")
             print("ref: " + ${{ github.ref_name }})
