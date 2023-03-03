@@ -20,6 +20,10 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: installing jira
+        run: |
+          pip install jira
+
       - name: running script
         uses: jannekem/run-python-script-action@v1
         with:
