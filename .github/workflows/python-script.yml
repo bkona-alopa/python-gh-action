@@ -28,4 +28,4 @@ jobs:
             print(f.read())
             print("********************")
             print("Hello World..!")
-            print("ref: " ${{ github.ref_name }})
+            print("ref: " + ${{ github.ref_name }})
