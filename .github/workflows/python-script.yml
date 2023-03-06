@@ -87,7 +87,7 @@ jobs:
                 if ticketStatus in ALLOWED_STATUS_LIST:
                     listOfAllowedTickets.append(ticket)
                 else:
-                    print(ticket + " is a parent ticket, status in not allowed")
+                    print(ticket + " is a parent ticket and the status is not allowed")
                     listOfNotAllowedTickets.append(ticket)
 
             if len(listOfNotAllowedTickets) == 0:
