@@ -33,6 +33,7 @@ jobs:
             listOfTicketsFromBranchName = re.findall(regex, "${{ github.head_ref }}")
             listOfTicketsFromPRTitle = re.findall(regex, "${{ github.event.pull_request.title }}")
             LIST_OF_TICKETS = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
+            set_env(LIST_OF_TICKETS, LIST_OF_TICKETS)
 
       - name: running script for jira connection
         uses: jannekem/run-python-script-action@v1
@@ -47,7 +48,7 @@ jobs:
             jiraOptions = {'server': "https://amalgamrx.atlassian.net"}
             jira = JIRA(options=jiraOptions, basic_auth=("${{ secrets.JIRA_USER_NAME }}", "${{ secrets.JIRA_TOKEN }}"))
 
-            for ticket in LIST_OF_TICKETS:
+            for ticket in ${{ env.LIST_OF_TICKETS }}:
                 try:    
                     singleIssue = jira.issue(ticket)
                 except:
