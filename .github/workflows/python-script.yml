@@ -32,8 +32,9 @@ jobs:
             regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
             listOfTicketsFromBranchName = re.findall(regex, "${{ github.head_ref }}")
             listOfTicketsFromPRTitle = re.findall(regex, "${{ github.event.pull_request.title }}")
-            str(LIST_OF_TICKETS) = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
-            set_output("LIST_OF_TICKETS", LIST_OF_TICKETS)
+            LIST_OF_TICKETS = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
+            STR_LIST_OF_TICKETS = str(LIST_OF_TICKETS)
+            set_output("LIST_OF_TICKETS", STR_LIST_OF_TICKETS)
 
       - name: running script for jira connection
         uses: jannekem/run-python-script-action@v1
