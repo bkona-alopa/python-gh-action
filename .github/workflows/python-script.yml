@@ -51,7 +51,7 @@ jobs:
             jiraOptions = {'server': "https://amalgamrx.atlassian.net"}
             jira = JIRA(options=jiraOptions, basic_auth=("${{ secrets.JIRA_USER_NAME }}", "${{ secrets.JIRA_TOKEN }}"))
 
-            for ticket in "${{ steps.list_prep.outputs.LIST_OF_TICKETS }}"":
+            for ticket in ${{ steps.list_prep.outputs.LIST_OF_TICKETS }}:
                 try:    
                     singleIssue = jira.issue(ticket)
                 except:
