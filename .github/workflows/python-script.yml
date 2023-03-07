@@ -25,6 +25,7 @@ jobs:
           pip install jira
 
       - name: running script for geeting tickets
+        id: list_prep
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
@@ -37,6 +38,7 @@ jobs:
             set_output("LIST_OF_TICKETS", STR_LIST_OF_TICKETS)
 
       - name: running script for jira connection
+        id: jira_chck
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
@@ -49,7 +51,7 @@ jobs:
             jiraOptions = {'server': "https://amalgamrx.atlassian.net"}
             jira = JIRA(options=jiraOptions, basic_auth=("${{ secrets.JIRA_USER_NAME }}", "${{ secrets.JIRA_TOKEN }}"))
 
-            for ticket in ${{ env.LIST_OF_TICKETS }}:
+            for ticket in "${{ steps.list_prep.outputs.LIST_OF_TICKETS }}"":
                 try:    
                     singleIssue = jira.issue(ticket)
                 except:
