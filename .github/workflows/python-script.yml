@@ -24,7 +24,17 @@ jobs:
         run: |
           pip install jira
 
-      - name: running script
+      - name: running script for geeting tickets
+        uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import re
+            regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
+            listOfTicketsFromBranchName = re.findall(regex, "${{ github.head_ref }}")
+            listOfTicketsFromPRTitle = re.findall(regex, "${{ github.event.pull_request.title }}")
+            LIST_OF_TICKETS = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
+
+      - name: running script for jira connection
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
@@ -36,10 +46,6 @@ jobs:
             #######################################################################################################
             jiraOptions = {'server': "https://amalgamrx.atlassian.net"}
             jira = JIRA(options=jiraOptions, basic_auth=("${{ secrets.JIRA_USER_NAME }}", "${{ secrets.JIRA_TOKEN }}"))
-            regex = r"([A-Za-z]{2,6}-[0-9]{1,6})"
-            listOfTicketsFromBranchName = re.findall(regex, "${{ github.head_ref }}")
-            listOfTicketsFromPRTitle = re.findall(regex, "${{ github.event.pull_request.title }}")
-            LIST_OF_TICKETS = listOfTicketsFromBranchName + listOfTicketsFromPRTitle
 
             for ticket in LIST_OF_TICKETS:
                 try:    
